@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "dev": "node --import tsx/esm src/index.ts",
     "fase1": "node --import tsx/esm src/experiments/fase1_rag_manual.ts",
     "migrate": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
@@ -11,9 +12,11 @@
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
     "@google/generative-ai": "^0.24.1",
+    "@hono/node-server": "^1.19.13",
     "@mastra/core": "^0.1.0",
     "ai": "^6.0.156",
     "dotenv": "^16.0.0",
+    "hono": "^4.12.12",
     "node-pg-migrate": "^8.0.4",
     "pg": "^8.20.0",
     "zod": "^3.0.0"
