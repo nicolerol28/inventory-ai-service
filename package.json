@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "fase1": "node --import tsx/esm src/experiments/fase1_rag_manual.ts",
+    "migrate": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down",
     "build": "tsc"
   },
   "dependencies": {
@@ -12,10 +14,13 @@
     "@mastra/core": "^0.1.0",
     "ai": "^6.0.156",
     "dotenv": "^16.0.0",
+    "node-pg-migrate": "^8.0.4",
+    "pg": "^8.20.0",
     "zod": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/pg": "^8.20.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   }

@@ -54,6 +54,7 @@ async function generarEmbedding(texto: string): Promise<number[]> {
       body: JSON.stringify({
         model: "models/gemini-embedding-001",
         content: { parts: [{ text: texto }] },
+        outputDimensionality: 768,
       }),
     }
   );
