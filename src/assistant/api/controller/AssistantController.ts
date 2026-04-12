@@ -16,11 +16,13 @@ assistantRouter.post("/chat", async (c) => {
   }
 
   const answer = await chatUseCase.execute(body.question);
+  c.header("Content-Type", "application/json; charset=utf-8");
   return c.json<ChatResponse>({ answer });
 });
 
 assistantRouter.post("/index", async (c) => {
   const result = await indexUseCase.execute();
+  c.header("Content-Type", "application/json; charset=utf-8");
   return c.json<IndexResponse>({
     message: "Indexación completada",
     indexed: result.indexed,

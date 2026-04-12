@@ -19,7 +19,8 @@ export class IndexProductsUseCase {
 
   async execute(): Promise<{ indexed: number; skipped: number }> {
     // 1. Traer productos activos del inventario Java
-    const products = await this.inventory.getProducts();
+    const response = await this.inventory.getProducts({ page: 0, size: 100 });
+    const products = response.content;
     const activeIds = products.map((p) => p.id);
 
     // 2. Limpiar embeddings huérfanos
@@ -35,10 +36,10 @@ export class IndexProductsUseCase {
         const embedding = await this.gemini.generateEmbedding(content);
         await this.repository.upsert(product.id, content, embedding);
         indexed++;
-        console.log(`✅ Indexado: ${product.name}`);
+        console.log(`Indexado: ${product.name}`);
       } catch (error) {
         skipped++;
-        console.error(`❌ Error indexando ${product.name}:`, error);
+        console.error(`Error indexando ${product.name}:`, error);
       }
     }
 

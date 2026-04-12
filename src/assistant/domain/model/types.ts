@@ -3,19 +3,23 @@ export interface Product {
   name: string;
   description: string;
   sku: string;
-  purchasePrice: number;
-  salePrice: number;
+  unitId: number;
   categoryId: number;
   supplierId: number;
+  purchasePrice: number;
+  salePrice: number;
   active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  imageUrl: string | null;
 }
-
+ 
 export interface Fragment {
   productId: number;
   content: string;
   embedding: number[];
 }
-
+ 
 export interface SearchResult {
   productId: number;
   content: string;

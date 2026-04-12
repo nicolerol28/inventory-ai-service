@@ -7,7 +7,7 @@ export class EmbeddingRepository {
   constructor() {
     this.pool = new pg.Pool({
       connectionString: process.env["DATABASE_URL"],
-      ssl: { rejectUnauthorized: false },
+      ssl: false,
     });
   }
 
