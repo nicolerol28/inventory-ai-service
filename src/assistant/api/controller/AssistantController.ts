@@ -1,10 +1,14 @@
 import { Hono } from "hono";
 import { ChatUseCase } from "../../application/usecase/ChatUseCase.js";
 import { IndexProductsUseCase } from "../../application/usecase/IndexProductsUseCase.js";
+import { HandleWebhookUseCase } from "../../application/usecase/HandleWebhookUseCase.js";
 import type { ChatRequest, ChatResponse, IndexResponse } from "../dto/types.js";
+import type { WebhookPayload } from "../../application/usecase/HandleWebhookUseCase.js";
 
 const chatUseCase = new ChatUseCase();
 const indexUseCase = new IndexProductsUseCase();
+const webhookUseCase = new HandleWebhookUseCase();
+const WEBHOOK_SECRET = process.env["WEBHOOK_SECRET"];
 
 export const assistantRouter = new Hono();
 
@@ -28,4 +32,24 @@ assistantRouter.post("/index", async (c) => {
     indexed: result.indexed,
     skipped: result.skipped,
   });
+});
+
+assistantRouter.post("/webhook", async (c) => {
+  const secret = c.req.header("X-Webhook-Secret");
+  if (!WEBHOOK_SECRET || secret !== WEBHOOK_SECRET) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  const body = await c.req.json<WebhookPayload>();
+  if (!body.event || !body.productId) {
+    return c.json({ error: "Missing event or productId" }, 400);
+  }
+
+  const validEvents = ["PRODUCT_CREATED", "PRODUCT_UPDATED", "PRODUCT_DELETED"];
+  if (!validEvents.includes(body.event)) {
+    return c.json({ error: `Invalid event: ${body.event}` }, 400);
+  }
+
+  const result = await webhookUseCase.execute(body);
+  return c.json(result);
 });

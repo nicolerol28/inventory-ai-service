@@ -1,26 +1,8 @@
 import { GeminiClient } from "../../infrastructure/gemini/GeminiClient.js";
 import { EmbeddingRepository } from "../../infrastructure/pgvector/EmbeddingRepository.js";
 import { InventoryClient } from "../../infrastructure/inventory/InventoryClient.js";
-import type { Product } from "../../domain/model/types.js";
-
-interface CatalogNames {
-  categories: Map<number, string>;
-  units: Map<number, string>;
-  suppliers: Map<number, string>;
-}
-
-function productToChunk(p: Product, catalogs: CatalogNames): string {
-  const category = catalogs.categories.get(p.categoryId) ?? `ID ${p.categoryId}`;
-  const unit = catalogs.units.get(p.unitId) ?? `ID ${p.unitId}`;
-  const supplier = catalogs.suppliers.get(p.supplierId) ?? `ID ${p.supplierId}`;
-
-  return `
-${p.name} (SKU: ${p.sku})
-Descripción: ${p.description}
-Precio compra: $${p.purchasePrice.toLocaleString("es-CO")} | Precio venta: $${p.salePrice.toLocaleString("es-CO")}
-Categoría: ${category} | Unidad: ${unit} | Proveedor: ${supplier} | Activo: ${p.active ? "sí" : "no"}
-  `.trim();
-}
+import { productToChunk } from "../../domain/model/product-chunk.js";
+import type { CatalogNames } from "../../domain/model/product-chunk.js";
 
 export class IndexProductsUseCase {
   private readonly gemini = new GeminiClient();

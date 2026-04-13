@@ -46,4 +46,11 @@ export class EmbeddingRepository {
       [activeProductIds]
     );
   }
+
+  async deleteByProductId(productId: number): Promise<void> {
+    await this.pool.query(
+      `DELETE FROM product_embeddings WHERE product_id = $1`,
+      [productId]
+    );
+  }
 }
