@@ -1,7 +1,8 @@
 import type { Context, Next } from "hono";
+import type { AppEnv } from "./types.js";
 import { verifyToken } from "./JwtValidator.js";
 
-export async function authMiddleware(c: Context, next: Next) {
+export async function authMiddleware(c: Context<AppEnv>, next: Next) {
   const header = c.req.header("Authorization");
 
   if (!header || !header.startsWith("Bearer ")) {
@@ -12,7 +13,7 @@ export async function authMiddleware(c: Context, next: Next) {
 
   try {
     const payload = verifyToken(token);
-    c.set("userId", payload.userId);
+    c.set("userId", String(payload.userId));
     c.set("userEmail", payload.sub);
     c.set("userRole", payload.role);
     c.set("userName", payload.name);

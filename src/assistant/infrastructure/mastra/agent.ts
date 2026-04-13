@@ -1,4 +1,6 @@
 import { Agent } from "@mastra/core/agent";
+import { Memory } from "@mastra/memory";
+import { PostgresStore } from "@mastra/pg";
 
 // Catalog tools
 import {
@@ -33,6 +35,17 @@ import { semanticSearchTool } from "./tools/rag.tools.js";
 // Report tool
 import { generatePurchaseReportTool } from "./tools/report.tools.js";
 
+const memory = new Memory({
+  storage: new PostgresStore({
+    id: "inventory-memory-storage",
+    connectionString: process.env["DATABASE_URL"]!,
+  }),
+  options: {
+    lastMessages: 20,
+    observationalMemory: true,
+  },
+});
+
 export const inventoryAgent = new Agent({
   id: "inventory-assistant",
   name: "Inventory Assistant",
@@ -40,6 +53,7 @@ export const inventoryAgent = new Agent({
     id: "google/gemini-2.5-flash",
     apiKey: process.env["GOOGLE_GENERATIVE_AI_API_KEY"],
   },
+  memory,
   instructions:
     "You are an intelligent inventory management assistant. " +
     "You help users query products, check stock levels, review movements, " +
