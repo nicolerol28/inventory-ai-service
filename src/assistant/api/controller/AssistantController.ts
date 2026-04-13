@@ -4,6 +4,7 @@ import { IndexProductsUseCase } from "../../application/usecase/IndexProductsUse
 import { HandleWebhookUseCase } from "../../application/usecase/HandleWebhookUseCase.js";
 import type { ChatRequest, ChatResponse, IndexResponse } from "../dto/types.js";
 import type { WebhookPayload } from "../../application/usecase/HandleWebhookUseCase.js";
+import { authMiddleware } from "../../infrastructure/auth/authMiddleware.js";
 
 const chatUseCase = new ChatUseCase();
 const indexUseCase = new IndexProductsUseCase();
@@ -12,7 +13,7 @@ const WEBHOOK_SECRET = process.env["WEBHOOK_SECRET"];
 
 export const assistantRouter = new Hono();
 
-assistantRouter.post("/chat", async (c) => {
+assistantRouter.post("/chat", authMiddleware, async (c) => {
   const body = await c.req.json<ChatRequest>();
 
   if (!body.question || body.question.trim() === "") {
