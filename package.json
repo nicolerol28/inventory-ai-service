@@ -4,10 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "node --import tsx/esm src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "fase1": "node --import tsx/esm src/experiments/fase1_rag_manual.ts",
     "migrate": "node-pg-migrate up",
-    "migrate:down": "node-pg-migrate down",
-    "build": "tsc"
+    "migrate:down": "node-pg-migrate down"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
