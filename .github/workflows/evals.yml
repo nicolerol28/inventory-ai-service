@@ -30,3 +30,8 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          INVENTORY_API_URL: ${{ secrets.INVENTORY_API_URL }}
+          INVENTORY_DEMO_EMAIL: ${{ secrets.INVENTORY_DEMO_EMAIL }}
+          INVENTORY_DEMO_PASSWORD: ${{ secrets.INVENTORY_DEMO_PASSWORD }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
