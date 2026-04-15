@@ -1,24 +1,23 @@
 import { Agent } from "@mastra/core/agent";
 import { Memory } from "@mastra/memory";
 import { PostgresStore } from "@mastra/pg";
-import { agentInstructions, agentTools, agentModel } from "./agent-config.js";
+import { agentInstructions, agentTools, agentModel } from "../assistant/infrastructure/mastra/agent-config.js";
 
-const memory = new Memory({
+const evalMemory = new Memory({
   storage: new PostgresStore({
-    id: "inventory-memory-storage",
+    id: "eval-memory-storage",
     connectionString: process.env["DATABASE_URL"]!,
   }),
   options: {
     lastMessages: 20,
-    observationalMemory: true,
   },
 });
 
-export const inventoryAgent = new Agent({
-  id: "inventory-assistant",
-  name: "Inventory Assistant",
+export const evalAgent = new Agent({
+  id: "inventory-eval-agent",
+  name: "Inventory Eval Agent",
   model: agentModel,
-  memory,
+  memory: evalMemory,
   instructions: agentInstructions,
   tools: agentTools,
 });

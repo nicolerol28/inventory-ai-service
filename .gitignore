@@ -8,3 +8,5 @@ build/
 Thumbs.db
 .vscode/
 .mastra/
+eval-results.json
+eval-report.html

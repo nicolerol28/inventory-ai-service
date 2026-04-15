@@ -9,7 +9,8 @@
     "fase1": "node --import tsx/esm src/experiments/fase1_rag_manual.ts",
     "migrate": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
-    "mcp": "node --import tsx/esm src/mcp.ts"
+    "mcp": "node --import tsx/esm src/mcp.ts",
+    "test:evals": "vitest run --config vitest.evals.config.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
@@ -28,11 +29,14 @@
     "zod": "^3.0.0"
   },
   "devDependencies": {
+    "@mastra/evals": "^1.2.1",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.20.0",
+    "dotenv-cli": "^11.0.0",
     "mastra": "^1.5.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.4"
   }
 }
