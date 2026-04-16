@@ -5,18 +5,27 @@ import { HttpBindings } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { assistantRouter } from "./assistant/api/controller/AssistantController.js";
+import { conversationRouter } from "./assistant/api/controller/ConversationController.js";
 import { mcpServer } from "./mcp-server.js";
+import { startSeedJob } from "./assistant/infrastructure/seed/SeedService.js";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
 app.use("*", cors({
-  origin: ["http://localhost:5173", "https://inventory.nicoleroldan.com"],
-  allowMethods: ["GET", "POST"],
+  origin: [
+    "http://localhost:5173",
+    "https://inventory.nicoleroldan.com",
+    "https://inventory-ai-chat.vercel.app",
+    `${process.env["CHAT_UI_URL"] ?? ""}`,
+  ].filter(Boolean),
+  allowMethods: ["GET", "POST", "PATCH", "DELETE"],
+  allowHeaders: ["Content-Type", "Authorization"],
 }));
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
 app.route("/api/v1/assistant", assistantRouter);
+app.route("/api/v1/conversations", conversationRouter);
 
 // MCP HTTP Streaming
 app.all("/mcp", async (c) => {
@@ -36,5 +45,9 @@ serve({ fetch: app.fetch, port: PORT }, () => {
   console.log(`inventory-ai-service corriendo en http://localhost:${PORT}`);
   console.log(`POST /api/v1/assistant/index`);
   console.log(`POST /api/v1/assistant/chat`);
+  console.log(`GET  /api/v1/conversations`);
   console.log(`MCP HTTP Streaming en http://localhost:${PORT}/mcp`);
+
+  // Start the daily seed job
+  startSeedJob();
 });

@@ -1,7 +1,8 @@
 import { GeminiClient } from "../../infrastructure/gemini/GeminiClient.js";
-import { EmbeddingRepository } from "../../infrastructure/pgvector/EmbeddingRepository.js";
+import { EmbeddingRepositoryImpl } from "../../infrastructure/repository/EmbeddingRepositoryImpl.js";
 import { InventoryClient } from "../../infrastructure/inventory/InventoryClient.js";
 import { productToChunk } from "../../domain/model/product-chunk.js";
+import type { EmbeddingRepository } from "../../domain/repository/EmbeddingRepository.js";
 
 export type WebhookEvent = "PRODUCT_CREATED" | "PRODUCT_UPDATED" | "PRODUCT_DELETED";
 
@@ -12,7 +13,7 @@ export interface WebhookPayload {
 
 export class HandleWebhookUseCase {
   private readonly gemini = new GeminiClient();
-  private readonly repository = new EmbeddingRepository();
+  private readonly repository: EmbeddingRepository = new EmbeddingRepositoryImpl();
   private readonly inventory = new InventoryClient();
 
   async execute(payload: WebhookPayload): Promise<{ action: string }> {

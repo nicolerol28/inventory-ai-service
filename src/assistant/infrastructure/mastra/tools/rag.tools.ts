@@ -1,14 +1,15 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 import { GeminiClient } from "../../gemini/GeminiClient.js";
-import { EmbeddingRepository } from "../../pgvector/EmbeddingRepository.js";
+import { EmbeddingRepositoryImpl } from "../../repository/EmbeddingRepositoryImpl.js";
+import type { EmbeddingRepository } from "../../../domain/repository/EmbeddingRepository.js";
 
 let gemini: GeminiClient;
 let repository: EmbeddingRepository;
 
 function getInstances() {
   if (!gemini) gemini = new GeminiClient();
-  if (!repository) repository = new EmbeddingRepository();
+  if (!repository) repository = new EmbeddingRepositoryImpl();
   return { gemini, repository };
 }
 

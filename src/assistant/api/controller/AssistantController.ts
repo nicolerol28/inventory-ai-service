@@ -5,7 +5,8 @@ import { HandleWebhookUseCase } from "../../application/usecase/HandleWebhookUse
 import type { ChatRequest, ChatResponse, IndexResponse } from "../dto/types.js";
 import type { WebhookPayload } from "../../application/usecase/HandleWebhookUseCase.js";
 import { authMiddleware } from "../../infrastructure/auth/authMiddleware.js";
-import type { AppEnv } from "../../infrastructure/auth/types.js"; 
+import type { AppEnv } from "../../infrastructure/auth/types.js";
+import { rateLimiter } from "../../infrastructure/ratelimit/RateLimiter.js";
 
 const chatUseCase = new ChatUseCase();
 const indexUseCase = new IndexProductsUseCase();
@@ -15,18 +16,35 @@ const WEBHOOK_SECRET = process.env["WEBHOOK_SECRET"];
 export const assistantRouter = new Hono<AppEnv>();
 
 assistantRouter.post("/chat", authMiddleware, async (c) => {
+  const userId = c.get("userId");
+
+  // Rate limiting
+  const limit = rateLimiter.check(userId);
+  c.header("X-RateLimit-Remaining", String(limit.remaining));
+  if (!limit.allowed) {
+    c.header("Retry-After", String(Math.ceil(limit.retryAfterMs / 1000)));
+    return c.json(
+      { error: "Rate limit exceeded. Please wait before sending another message." },
+      429
+    );
+  }
+
   const body = await c.req.json<ChatRequest>();
 
   if (!body.question || body.question.trim() === "") {
     return c.json({ error: "La pregunta no puede estar vacía" }, 400);
   }
 
-  const userId = c.get("userId");
   const threadId = body.threadId || crypto.randomUUID();
 
-  const answer = await chatUseCase.execute(body.question, userId, threadId);
+  const answer = await chatUseCase.execute(
+    body.question,
+    userId,
+    threadId,
+    body.conversationId
+  );
   c.header("Content-Type", "application/json; charset=utf-8");
-  return c.json<ChatResponse>({ answer, threadId });
+  return c.json<ChatResponse>({ answer, threadId, conversationId: body.conversationId });
 });
 
 assistantRouter.post("/index", async (c) => {

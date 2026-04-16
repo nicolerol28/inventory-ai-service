@@ -1,7 +1,8 @@
 import pg from "pg";
 import type { SearchResult } from "../../domain/model/types.js";
+import type { EmbeddingRepository } from "../../domain/repository/EmbeddingRepository.js";
 
-export class EmbeddingRepository {
+export class EmbeddingRepositoryImpl implements EmbeddingRepository {
   private readonly pool: pg.Pool;
 
   constructor() {
