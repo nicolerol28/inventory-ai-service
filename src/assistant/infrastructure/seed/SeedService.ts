@@ -2,7 +2,7 @@ import { ConversationRepositoryImpl } from "../repository/ConversationRepository
 import type { ConversationRepository } from "../../domain/repository/ConversationRepository.js";
 import { SEED_CONVERSATIONS } from "./seed-conversations.js";
 
-const DEMO_USER_ID = Number(process.env["DEMO_USER_ID"] ?? "1");
+const DEMO_USER_ID = Number(process.env["DEMO_USER_ID"] ?? "4");
 
 const repo: ConversationRepository = new ConversationRepositoryImpl();
 
