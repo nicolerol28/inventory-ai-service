@@ -36,6 +36,12 @@ conversationRouter.post("/", async (c) => {
   return c.json(conversation, 201);
 });
 
+conversationRouter.post("/reset-seeds", async (c) => {
+  const { resetConversations } = await import("../../infrastructure/seed/SeedService.js");
+  await resetConversations();
+  return c.json({ message: "Seeds reset complete" });
+});
+
 conversationRouter.get("/:id/messages", async (c) => {
   const userId = Number(c.get("userId"));
   const conversationId = c.req.param("id");
@@ -81,12 +87,6 @@ conversationRouter.delete("/:id", async (c) => {
       404
     );
   }
-
-  conversationRouter.post("/reset-seeds", async (c) => {
-  const { resetConversations } = await import("../../infrastructure/seed/SeedService.js");
-  await resetConversations();
-  return c.json({ message: "Seeds reset complete" });
-});
 
   return c.json({ message: "Conversation deleted" });
 });
