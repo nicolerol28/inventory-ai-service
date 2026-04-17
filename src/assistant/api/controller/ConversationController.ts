@@ -82,5 +82,11 @@ conversationRouter.delete("/:id", async (c) => {
     );
   }
 
+  conversationRouter.post("/reset-seeds", async (c) => {
+  const { resetConversations } = await import("../../infrastructure/seed/SeedService.js");
+  await resetConversations();
+  return c.json({ message: "Seeds reset complete" });
+});
+
   return c.json({ message: "Conversation deleted" });
 });
