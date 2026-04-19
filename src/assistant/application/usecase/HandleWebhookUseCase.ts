@@ -16,7 +16,7 @@ export class HandleWebhookUseCase {
   private readonly repository: EmbeddingRepository = new EmbeddingRepositoryImpl();
   private readonly inventory = new InventoryClient();
 
-  async execute(payload: WebhookPayload): Promise<{ action: string }> {
+  async execute(payload: WebhookPayload): Promise<{ action: string; reason?: string }> {
     const { event, productId } = payload;
 
     if (event === "PRODUCT_DELETED") {
@@ -26,12 +26,22 @@ export class HandleWebhookUseCase {
     }
 
     // PRODUCT_CREATED or PRODUCT_UPDATED — fetch product and regenerate embedding
-    const [product, categories, units, suppliers] = await Promise.all([
-      this.inventory.getProductById(productId),
-      this.inventory.getCategories(),
-      this.inventory.getUnits(),
-      this.inventory.getSuppliers(),
-    ]);
+    let product, categories, units, suppliers;
+    try {
+      [product, categories, units, suppliers] = await Promise.all([
+        this.inventory.getProductById(productId),
+        this.inventory.getCategories(),
+        this.inventory.getUnits(),
+        this.inventory.getSuppliers(),
+      ]);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes("404")) {
+        console.warn(`Webhook: product ${productId} not found in backend — skipping`);
+        return { action: "skipped", reason: "product_not_found" };
+      }
+      throw error;
+    }
 
     const catalogs = {
       categories: new Map(categories.map((c) => [c.id, c.name])),

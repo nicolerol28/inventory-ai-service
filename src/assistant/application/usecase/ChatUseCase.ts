@@ -15,20 +15,31 @@ export class ChatUseCase {
       await repo.addMessage(conversationId, "user", question);
     }
 
-    const response = await inventoryAgent.generate(question, {
-      memory: {
-        resource: userId,
-        thread: threadId,
-      },
-      modelSettings: {
-        maxOutputTokens: 4096,
-      },
-    });
+    try {
+      const response = await inventoryAgent.generate(question, {
+        memory: {
+          resource: userId,
+          thread: threadId,
+        },
+        modelSettings: {
+          maxOutputTokens: 4096,
+        },
+      });
 
-    if (conversationId) {
-      await repo.addMessage(conversationId, "assistant", response.text);
+      if (conversationId) {
+        await repo.addMessage(conversationId, "assistant", response.text);
+      }
+
+      return response.text;
+    } catch (error) {
+      if (conversationId) {
+        await repo.addMessage(
+          conversationId,
+          "assistant",
+          "Lo siento, ocurrió un error al procesar tu solicitud."
+        );
+      }
+      throw error;
     }
-
-    return response.text;
   }
 }

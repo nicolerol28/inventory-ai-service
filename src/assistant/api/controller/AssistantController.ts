@@ -30,31 +30,46 @@ assistantRouter.post("/chat", authMiddleware, async (c) => {
   }
 
   const body = await c.req.json<ChatRequest>();
+  const question = body.question?.trim() ?? "";
 
-  if (!body.question || body.question.trim() === "") {
+  if (!question) {
     return c.json({ error: "La pregunta no puede estar vacía" }, 400);
+  }
+
+  if (question.length > 4000) {
+    return c.json({ error: "La pregunta es demasiado larga (máximo 4000 caracteres)" }, 400);
   }
 
   const threadId = body.threadId || crypto.randomUUID();
 
-  const answer = await chatUseCase.execute(
-    body.question,
-    userId,
-    threadId,
-    body.conversationId
-  );
-  c.header("Content-Type", "application/json; charset=utf-8");
-  return c.json<ChatResponse>({ answer, threadId, conversationId: body.conversationId });
+  try {
+    const answer = await chatUseCase.execute(
+      question,
+      userId,
+      threadId,
+      body.conversationId
+    );
+    c.header("Content-Type", "application/json; charset=utf-8");
+    return c.json<ChatResponse>({ answer, threadId, conversationId: body.conversationId });
+  } catch (error) {
+    console.error("[/chat] Error:", error);
+    return c.json({ error: "Error al procesar la consulta" }, 500);
+  }
 });
 
-assistantRouter.post("/index", async (c) => {
-  const result = await indexUseCase.execute();
-  c.header("Content-Type", "application/json; charset=utf-8");
-  return c.json<IndexResponse>({
-    message: "Indexación completada",
-    indexed: result.indexed,
-    skipped: result.skipped,
-  });
+assistantRouter.post("/index", authMiddleware, async (c) => {
+  try {
+    const result = await indexUseCase.execute();
+    c.header("Content-Type", "application/json; charset=utf-8");
+    return c.json<IndexResponse>({
+      message: "Indexación completada",
+      indexed: result.indexed,
+      skipped: result.skipped,
+    });
+  } catch (error) {
+    console.error("[/index] Error:", error);
+    return c.json({ error: "Error al indexar productos" }, 500);
+  }
 });
 
 assistantRouter.post("/webhook", async (c) => {
@@ -73,6 +88,11 @@ assistantRouter.post("/webhook", async (c) => {
     return c.json({ error: `Invalid event: ${body.event}` }, 400);
   }
 
-  const result = await webhookUseCase.execute(body);
-  return c.json(result);
+  try {
+    const result = await webhookUseCase.execute(body);
+    return c.json(result);
+  } catch (error) {
+    console.error("[/webhook] Error:", error);
+    return c.json({ error: "Error al procesar el webhook" }, 500);
+  }
 });
