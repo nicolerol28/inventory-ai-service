@@ -12,8 +12,8 @@ AI microservice built with **Mastra 1.24.1** and **TypeScript** — RAG with pgv
 
 | Project | Repo | URL |
 |---------|------|-----|
-| **AI Service** (this repo) | [inventory-ai-service](https://github.com/nicolerol28/inventory-ai-service) | Railway |
-| **Inventory Backend** | [inventory-system-backend](https://github.com/nicolerol28/inventory-system-backend) | Railway |
+| **AI Service** (this repo) | [inventory-ai-service](https://github.com/nicolerol28/inventory-ai-service) | — |
+| **Inventory Backend** | [inventory-system-backend](https://github.com/nicolerol28/inventory-system-backend) | — |
 | **Inventory Frontend** | [inventory-system-frontend](https://github.com/nicolerol28/inventory-system-frontend) | [inventory.nicoleroldan.com](https://inventory.nicoleroldan.com) |
 | **Chat UI** | [inventory-ai-chat](https://github.com/nicolerol28/inventory-ai-chat) | [chat.nicoleroldan.com](https://chat.nicoleroldan.com) |
 
@@ -39,14 +39,14 @@ AI microservice built with **Mastra 1.24.1** and **TypeScript** — RAG with pgv
 
 ## Project Phases
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 1 | Manual RAG with embeddings (cosine similarity from scratch) | 
-| 2 | Real RAG with pgvector + `EmbeddingRepository` | 
-| 3 | Agent with 17 tools (products, stock, movements, catalog, reports) | 
-| 3.5 | MCP server — stdio for Claude Desktop, HTTP streaming for Mastra Studio | 
-| 4 | Agent memory — `PostgresStore` + `observationalMemory` | 
-| 5 | Automated evals — 4 test suites, 55 cases, HTML report, CI with GitHub Actions | 
+| Phase | Description |
+|-------|-------------|
+| 1 | Manual RAG with embeddings (cosine similarity from scratch) |
+| 2 | Real RAG with pgvector + `EmbeddingRepository` |
+| 3 | Agent with 17 tools (products, stock, movements, catalog, reports) |
+| 3.5 | MCP server — stdio for Claude Desktop, HTTP streaming for Mastra Studio |
+| 4 | Agent memory — `PostgresStore` + `observationalMemory` |
+| 5 | Automated evals — 4 test suites, 55 cases, HTML report, CI with GitHub Actions |
 | 6 | Backend: conversation CRUD, rate limiting, daily seed job, hexagonal refactor · Frontend: streaming chat UI (React) | 
 
 ---
