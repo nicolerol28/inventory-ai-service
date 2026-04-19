@@ -37,6 +37,18 @@ conversationRouter.post("/", async (c) => {
 });
 
 conversationRouter.post("/reset-seeds", async (c) => {
+  const RESET_SECRET = process.env["RESET_SECRET"];
+  const provided = c.req.header("x-reset-secret");
+
+  if (!RESET_SECRET) {
+    console.warn("[reset-seeds] RESET_SECRET not configured — denying request");
+    return c.json({ error: "Forbidden" }, 403);
+  }
+
+  if (!provided || provided !== RESET_SECRET) {
+    return c.json({ error: "Forbidden" }, 403);
+  }
+
   const { resetConversations } = await import("../../infrastructure/seed/SeedService.js");
   await resetConversations();
   return c.json({ message: "Seeds reset complete" });

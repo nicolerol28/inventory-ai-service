@@ -11,9 +11,11 @@ import { startSeedJob } from "./assistant/infrastructure/seed/SeedService.js";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
+const isProduction = process.env["NODE_ENV"] === "production";
+
 app.use("*", cors({
   origin: [
-    "http://localhost:5173",
+    ...(isProduction ? [] : ["http://localhost:5173"]),
     "https://inventory.nicoleroldan.com",
     "https://inventory-ai-chat.vercel.app",
     `${process.env["CHAT_UI_URL"] ?? ""}`,
@@ -29,6 +31,21 @@ app.route("/api/v1/conversations", conversationRouter);
 
 // MCP HTTP Streaming
 app.all("/mcp", async (c) => {
+  const MCP_API_KEY = process.env["MCP_API_KEY"];
+
+  if (!MCP_API_KEY) {
+    console.warn("[MCP] MCP_API_KEY not configured — denying all MCP HTTP requests");
+    return c.json({ error: "MCP HTTP access is not enabled" }, 401);
+  }
+
+  const provided =
+    c.req.header("x-api-key") ??
+    c.req.header("Authorization")?.replace(/^Bearer\s+/i, "");
+
+  if (provided !== MCP_API_KEY) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
   const { incoming: req, outgoing: res } = c.env;
   await mcpServer.startHTTP({
     url: new URL(c.req.url),
