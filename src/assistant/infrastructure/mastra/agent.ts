@@ -6,7 +6,7 @@ import { agentInstructions, agentTools, agentModel } from "./agent-config.js";
 const memory = new Memory({
   storage: new PostgresStore({
     id: "inventory-memory-storage",
-    connectionString: process.env["DATABASE_URL"]!,
+    connectionString: process.env["DATABASE_URL"],
   }),
   options: {
     lastMessages: 20,
@@ -19,6 +19,6 @@ export const inventoryAgent = new Agent({
   name: "Inventory Assistant",
   model: agentModel,
   memory,
-  instructions: agentInstructions,
+  instructions: agentInstructions(),
   tools: agentTools,
 });

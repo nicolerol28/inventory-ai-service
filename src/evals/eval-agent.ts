@@ -18,6 +18,6 @@ export const evalAgent = new Agent({
   name: "Inventory Eval Agent",
   model: agentModel,
   memory: evalMemory,
-  instructions: agentInstructions,
+  instructions: agentInstructions(),
   tools: agentTools,
 });

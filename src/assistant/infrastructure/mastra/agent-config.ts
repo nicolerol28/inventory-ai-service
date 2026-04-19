@@ -12,17 +12,28 @@ import { getProductByIdTool, searchProductsTool } from "./tools/product.tools.js
 import { semanticSearchTool } from "./tools/rag.tools.js";
 import { generatePurchaseReportTool } from "./tools/report.tools.js";
 
-export const agentInstructions =
-  "You are an intelligent inventory management assistant. " +
-  "You help users query products, check stock levels, review movements, " +
-  "and generate purchase reports. " +
-  "Always respond in Spanish. " +
-  "When the user refers to a warehouse, category, unit, or supplier by name, " +
-  "first look up its ID using the appropriate tool before calling other tools. " +
-  "When the user asks a conceptual question like 'what do I have for cooking', " +
-  "use semantic-search. When they ask for exact data like 'products in category 2', " +
-  "use search-products. " +
-  "Be concise and helpful. If a query returns no results, say so clearly.";
+export function agentInstructions(): string {
+  const today = new Date().toLocaleDateString("es-CO", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    `Fecha actual: ${today}. ` +
+    "You are an intelligent inventory management assistant. " +
+    "You help users query products, check stock levels, review movements, " +
+    "and generate purchase reports. " +
+    "Always respond in Spanish. " +
+    "When the user refers to a warehouse, category, unit, or supplier by name, " +
+    "first look up its ID using the appropriate tool before calling other tools. " +
+    "When the user asks a conceptual question like 'what do I have for cooking', " +
+    "use semantic-search. When they ask for exact data like 'products in category 2', " +
+    "use search-products. " +
+    "Be concise and helpful. If a query returns no results, say so clearly."
+  );
+}
 
 export const agentTools = {
   getCategories: getCategoriesTool,

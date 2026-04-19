@@ -16,5 +16,4 @@ export interface ConversationRepository {
   deleteMessagesBySeedConversation(conversationId: string): Promise<void>;
   addMessage(conversationId: string, role: "user" | "assistant", content: string): Promise<Message>;
   getMessages(conversationId: string, limit?: number, offset?: number): Promise<Message[]>;
-  getMessageCount(conversationId: string): Promise<number>;
 }

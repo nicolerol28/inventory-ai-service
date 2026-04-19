@@ -1,23 +1,15 @@
-import pg from "pg";
 import type { ConversationRepository } from "../../domain/repository/ConversationRepository.js";
 import type {
   Conversation,
   Message,
   ConversationWithLastMessage,
 } from "../../domain/model/conversation.js";
+import { pool } from "../database/db.js";
 
 export class ConversationRepositoryImpl implements ConversationRepository {
-  private readonly pool: pg.Pool;
-
-  constructor() {
-    this.pool = new pg.Pool({
-      connectionString: process.env["DATABASE_URL"],
-      ssl: false,
-    });
-  }
 
   async create(userId: number, title?: string): Promise<Conversation> {
-    const result = await this.pool.query(
+    const result = await pool.query(
       `INSERT INTO conversations (user_id, title)
        VALUES ($1, $2)
        RETURNING *`,
@@ -31,7 +23,7 @@ export class ConversationRepositoryImpl implements ConversationRepository {
     userId: number,
     title: string
   ): Promise<Conversation> {
-    const result = await this.pool.query(
+    const result = await pool.query(
       `INSERT INTO conversations (id, user_id, title, is_seed, active)
        VALUES ($1, $2, $3, TRUE, TRUE)
        ON CONFLICT (id) DO UPDATE SET title = $3, user_id = $2, active = TRUE, updated_at = NOW()
@@ -42,7 +34,7 @@ export class ConversationRepositoryImpl implements ConversationRepository {
   }
 
   async findByUserId(userId: number): Promise<ConversationWithLastMessage[]> {
-    const result = await this.pool.query(
+    const result = await pool.query(
       `SELECT c.*,
               m.content AS last_message,
               COALESCE(mc.count, 0)::int AS message_count
@@ -68,7 +60,7 @@ export class ConversationRepositoryImpl implements ConversationRepository {
   }
 
   async findById(id: string): Promise<Conversation | null> {
-    const result = await this.pool.query(
+    const result = await pool.query(
       `SELECT * FROM conversations WHERE id = $1 AND active = TRUE`,
       [id]
     );
@@ -76,14 +68,14 @@ export class ConversationRepositoryImpl implements ConversationRepository {
   }
 
   async updateTitle(id: string, title: string): Promise<void> {
-    await this.pool.query(
+    await pool.query(
       `UPDATE conversations SET title = $1, updated_at = NOW() WHERE id = $2`,
       [title, id]
     );
   }
 
   async deactivate(id: string): Promise<boolean> {
-    const result = await this.pool.query(
+    const result = await pool.query(
       `UPDATE conversations SET active = FALSE, updated_at = NOW() WHERE id = $1 AND active = TRUE`,
       [id]
     );
@@ -91,21 +83,21 @@ export class ConversationRepositoryImpl implements ConversationRepository {
   }
 
   async deactivateAllNonSeed(): Promise<number> {
-    const result = await this.pool.query(
+    const result = await pool.query(
       `UPDATE conversations SET active = FALSE, updated_at = NOW() WHERE is_seed = FALSE AND active = TRUE`
     );
     return result.rowCount ?? 0;
   }
 
   async reactivateSeed(id: string): Promise<void> {
-    await this.pool.query(
+    await pool.query(
       `UPDATE conversations SET active = TRUE, updated_at = NOW() WHERE id = $1`,
       [id]
     );
   }
 
   async deleteMessagesBySeedConversation(conversationId: string): Promise<void> {
-    await this.pool.query(
+    await pool.query(
       `DELETE FROM messages WHERE conversation_id = $1`,
       [conversationId]
     );
@@ -118,14 +110,14 @@ export class ConversationRepositoryImpl implements ConversationRepository {
     role: "user" | "assistant",
     content: string
   ): Promise<Message> {
-    const result = await this.pool.query(
+    const result = await pool.query(
       `INSERT INTO messages (conversation_id, role, content)
        VALUES ($1, $2, $3)
        RETURNING *`,
       [conversationId, role, content]
     );
 
-    await this.pool.query(
+    await pool.query(
       `UPDATE conversations SET updated_at = NOW() WHERE id = $1`,
       [conversationId]
     );
@@ -138,7 +130,7 @@ export class ConversationRepositoryImpl implements ConversationRepository {
     limit = 50,
     offset = 0
   ): Promise<Message[]> {
-    const result = await this.pool.query(
+    const result = await pool.query(
       `SELECT * FROM messages
        WHERE conversation_id = $1
        ORDER BY created_at ASC
@@ -148,15 +140,7 @@ export class ConversationRepositoryImpl implements ConversationRepository {
     return result.rows.map(this.mapMessage);
   }
 
-  async getMessageCount(conversationId: string): Promise<number> {
-    const result = await this.pool.query(
-      `SELECT COUNT(*)::int AS count FROM messages WHERE conversation_id = $1`,
-      [conversationId]
-    );
-    return result.rows[0].count;
-  }
-
-  // Mappers 
+  // Mappers
 
   private mapConversation(row: Record<string, unknown>): Conversation {
     return {

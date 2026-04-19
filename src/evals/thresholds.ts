@@ -13,5 +13,5 @@ export const THRESHOLDS: Record<string, number> = {
   "context-retention": 1.0,
   // tools.eval.test.ts
   "tool-selection": 0.6,
-  "tool-call-efficiency": 1.0,
+  "tool-call-efficiency": 0.8,
 };

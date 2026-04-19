@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { inventoryAgent } from "../assistant/infrastructure/mastra/agent.js";
+import { evalAgent as inventoryAgent } from "./eval-agent.js";
 import { getMemoryThreads } from "./data/dataset.js";
 import type { EvalCase } from "./types.js";
 import { addEvalResult } from "./reports/eval-results-writer.js";
