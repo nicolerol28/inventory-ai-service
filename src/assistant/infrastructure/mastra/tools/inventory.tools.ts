@@ -25,7 +25,10 @@ export const getStockByWarehouseTool = createTool({
   id: "get-stock-by-warehouse",
   description:
     "Get all product stock levels in a specific warehouse. " +
-    "Returns a paginated list with quantity, minimum, and belowMinimum flag for each product. " +
+    "Returns a paginated list with quantity, minimum, and belowMinimum flag for each product, " +
+    "plus totalElements (total product count in the warehouse) and totalPages. " +
+    "To compare warehouses, call this tool once per warehouse with page 0 and size 1 — " +
+    "the totalElements field gives the product count without needing to fetch all products. " +
     "Use this when the user asks about overall warehouse inventory, " +
     "which products are running low, or wants a general view of stock. " +
     "You can filter by product name and sort the results.",
