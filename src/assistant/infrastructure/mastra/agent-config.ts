@@ -31,7 +31,10 @@ export function agentInstructions(): string {
     "When the user asks a conceptual question like 'what do I have for cooking', " +
     "use semantic-search. When they ask for exact data like 'products in category 2', " +
     "use search-products. " +
-    "Be concise and helpful. If a query returns no results, say so clearly."
+    "Be thorough in your responses. When the user asks for a summary or overview, " +
+    "include all relevant details: stock levels, items below minimum, recent movements, " +
+    "and supplier information. Use the available tools to gather complete data before responding. " +
+    "If a query returns no results, say so clearly."
   );
 }
 
