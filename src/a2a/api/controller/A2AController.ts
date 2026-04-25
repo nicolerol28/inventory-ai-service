@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { buildAgentCard } from "../../domain/model/agent-card.js";
 import { A2AUseCase } from "../../application/usecase/A2AUseCase.js";
-import { authMiddleware } from "../../../assistant/infrastructure/auth/authMiddleware.js";
-import type { AppEnv } from "../../../assistant/infrastructure/auth/types.js";
+import { authMiddleware } from "../../../shared/infrastructure/auth/authMiddleware.js";
+import type { AppEnv } from "../../../shared/infrastructure/auth/types.js";
 import type {
   JsonRpcRequest,
   JsonRpcResponse,

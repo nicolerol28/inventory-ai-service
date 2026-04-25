@@ -6,8 +6,8 @@ import {
   DeleteConversationUseCase,
   UpdateConversationTitleUseCase,
 } from "../../application/usecase/ConversationUseCases.js";
-import { authMiddleware } from "../../infrastructure/auth/authMiddleware.js";
-import type { AppEnv } from "../../infrastructure/auth/types.js";
+import { authMiddleware } from "../../../shared/infrastructure/auth/authMiddleware.js";
+import type { AppEnv } from "../../../shared/infrastructure/auth/types.js";
 import type {
   CreateConversationRequest,
   UpdateConversationRequest,

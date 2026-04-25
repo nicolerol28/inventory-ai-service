@@ -4,8 +4,8 @@ import { IndexProductsUseCase } from "../../application/usecase/IndexProductsUse
 import { HandleWebhookUseCase } from "../../application/usecase/HandleWebhookUseCase.js";
 import type { ChatRequest, ChatResponse, IndexResponse } from "../dto/types.js";
 import type { WebhookPayload } from "../../application/usecase/HandleWebhookUseCase.js";
-import { authMiddleware } from "../../infrastructure/auth/authMiddleware.js";
-import type { AppEnv } from "../../infrastructure/auth/types.js";
+import { authMiddleware } from "../../../shared/infrastructure/auth/authMiddleware.js";
+import type { AppEnv } from "../../../shared/infrastructure/auth/types.js";
 import { rateLimiter } from "../../infrastructure/ratelimit/RateLimiter.js";
 
 const chatUseCase = new ChatUseCase();
