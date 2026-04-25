@@ -8,6 +8,7 @@ import { assistantRouter } from "./assistant/api/controller/AssistantController.
 import { conversationRouter } from "./assistant/api/controller/ConversationController.js";
 import { mcpServer } from "./mcp-server.js";
 import { startSeedJob } from "./assistant/infrastructure/seed/SeedService.js";
+import { a2aRouter } from "./a2a/api/controller/A2AController.js";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
@@ -56,6 +57,8 @@ app.all("/mcp", async (c) => {
   return new Response(null);
 });
 
+app.route("", a2aRouter);
+
 const PORT = parseInt(process.env["PORT"] ?? "3000");
 
 serve({ fetch: app.fetch, port: PORT }, () => {
@@ -64,6 +67,8 @@ serve({ fetch: app.fetch, port: PORT }, () => {
   console.log(`POST /api/v1/assistant/chat`);
   console.log(`GET  /api/v1/conversations`);
   console.log(`MCP HTTP Streaming en http://localhost:${PORT}/mcp`);
+  console.log(`GET  /.well-known/agent.json`);
+  console.log(`POST /a2a`);
 
   // Start the daily seed job
   startSeedJob();
