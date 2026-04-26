@@ -34,6 +34,10 @@ export class A2AUseCase {
       const agent = mastra.getAgent("inventoryAgent");
 
       const result = await agent.generate(userText, {
+        memory: {
+          resource: "a2a",
+          thread: `a2a-${taskId}`,
+        },
         modelSettings: { maxOutputTokens: 4096 },
       });
 
