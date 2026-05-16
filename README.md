@@ -28,12 +28,13 @@ AI microservice built with **Mastra 1.24.1** and **TypeScript** — RAG with pgv
 | LLM | Gemini 2.5 Flash |
 | Embeddings | Gemini Embedding 001 |
 | HTTP Server | Hono |
-| Database | PostgreSQL + pgvector (Railway) |
+| Database | PostgreSQL + pgvector (Self-hosted) |
 | Agent Memory | Mastra PostgresStore + observationalMemory |
 | MCP | `@mastra/mcp` — stdio & HTTP streaming |
 | Evals | `@mastra/evals` + Vitest |
 | Auth | JWT validation |
 | CI | GitHub Actions |
+| Deploy | Self-hosted (Ubuntu Server 22.04 + Docker) |
 
 ---
 
